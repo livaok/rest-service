@@ -18,9 +18,4 @@ public class GreetingController {
 	public Greeting hello(@RequestParam(value = "name", defaultValue = "Anon") String name) {
 		return new Greeting(number.incrementAndGet(), name);
 	}
-
-	@GetMapping("/bye")
-	public Greeting bye(@RequestParam(value = "name", defaultValue = "Anon") String name) {
-		return new Greeting(number.decrementAndGet(), name);
-	}
 }
