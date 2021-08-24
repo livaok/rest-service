@@ -26,7 +26,7 @@ pipeline {
 
                     openshift.withCluster() {
 
-                        return !openshift.selector("bc", "mapit").exists();
+                        return !openshift.selector("bc", "test").exists();
 
                     }
 
@@ -40,7 +40,7 @@ pipeline {
 
                     openshift.withCluster() {
 
-                        openshift.newBuild("--name=TEST", "--image-stream=openjdk:8-jdk-alpine", "--binary")
+                        openshift.newBuild("--name=test", "--image-stream=openjdk:8-jdk-alpine", "--binary")
 
                     }
 
@@ -58,7 +58,7 @@ pipeline {
 
                     openshift.withCluster() {
 
-                        openshift.selector("bc", "TEST").startBuild("--from-file=target/rest-service-0.0.1-SNAPSHOT.jar", "--wait")
+                        openshift.selector("bc", "test").startBuild("--from-file=target/rest-service-0.0.1-SNAPSHOT.jar", "--wait")
 
                     }
 
@@ -76,7 +76,7 @@ pipeline {
 
                     openshift.withCluster() {
 
-                        openshift.tag("TEST:latest", "TEST:dev")
+                        openshift.tag("test:latest", "test:dev")
 
                     }
 
@@ -94,7 +94,7 @@ pipeline {
 
                     openshift.withCluster() {
 
-                        return !openshift.selector('dc', 'TEST-dev').exists()
+                        return !openshift.selector('dc', 'test-dev').exists()
 
                     }
 
@@ -108,7 +108,7 @@ pipeline {
 
                     openshift.withCluster() {
 
-                        openshift.newApp("TEST:latest", "--name=TEST-dev").narrow('svc').expose()
+                        openshift.newApp("test:latest", "--name=test-dev").narrow('svc').expose()
 
                     }
 
