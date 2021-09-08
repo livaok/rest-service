@@ -1,5 +1,5 @@
 FROM openjdk:8-jdk-alpine
-WORKDIR /var/lib/jenkins
+WORKDIR /var/lib/jenkins/workspace/.git
 VOLUME /tmp
 RUN git clone https://github.com/livaok/rest-service.git
 # Путь должен быть внутри контекста билда
