@@ -1,8 +1,20 @@
-FROM openjdk:8-jdk-alpine
-WORKDIR /var/lib/jenkins/workspace/test
-VOLUME /tmp
-RUN git clone https://github.com/livaok/rest-service.git
+FROM openjdk:8-jdk-alpine as build
+WORKDIR /workspace/app
 
-# Путь должен быть внутри контекста билда
-COPY /var/lib/jenkins/workspace/test/target/rest-service-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
+
+RUN ./mvnw package -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+
+FROM openjdk:8-jdk-alpine
+VOLUME /tmp
+
+ARG DEPENDENCY=/workspace/app/target/dependency
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+ENTRYPOINT ["java","-cp","app:app/lib/*","com.example.restservice.RestServiceApplication"]
+
